@@ -1,12 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import setup from '../game/setup'
 
 const { GAME_STATUS, createRematchGame, hasGameProgress } = setup
 
 export default function HomeActions() {
+  const router = useRouter()
   const [savedGame, setSavedGame] = useState(null)
 
   useEffect(() => {
@@ -18,7 +20,7 @@ export default function HomeActions() {
     if (!savedGame) return
     const rematch = createRematchGame(savedGame)
     window.localStorage.setItem('ohsa-game', JSON.stringify(rematch))
-    window.location.href = '/scoreboard'
+    router.push('/scoreboard')
   }
 
   const hasSavedGame = Boolean(savedGame)
