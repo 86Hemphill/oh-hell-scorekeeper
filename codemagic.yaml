@@ -14,7 +14,13 @@ workflows:
       - name: Build static web app
         script: npm run build:web
       - name: Generate iOS SPM project
-        script: npx --no-install cap add ios --packagemanager SPM
+        script: |
+          set -e
+          mv out out-for-capacitor-add
+          trap 'mv out-for-capacitor-add out' EXIT
+          npx --no-install cap add ios --packagemanager SPM
+          mv out-for-capacitor-add out
+          trap - EXIT
       - name: Sync iOS
         script: npm run cap:sync
       - name: Compile unsigned simulator app
