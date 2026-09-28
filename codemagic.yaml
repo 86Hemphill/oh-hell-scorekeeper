@@ -37,7 +37,10 @@ workflows:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             build 2>&1 | tee "$CM_BUILD_DIR/xcodebuild.log"
+      - name: Archive generated iOS project
+        script: tar -czf "$CM_BUILD_DIR/ios-project.tar.gz" -C "$CM_BUILD_DIR" ios
     artifacts:
       - build/ios/Build/Products/Debug-iphonesimulator/*.app
       - xcodebuild.log
       - ios/App/CapApp-SPM/Package.swift
+      - ios-project.tar.gz
