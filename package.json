@@ -8,11 +8,14 @@
     "node": ">=20"
   },
   "dependencies": {
-    "next": "14.2.5",
+    "@capacitor/core": "7.6.9",
+    "@capacitor/ios": "7.6.9",
+    "next": "14.2.35",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "7.6.9",
     "@types/node": "25.5.0",
     "@types/react": "19.2.14",
     "prettier": "2.1.2",
@@ -26,6 +29,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:web": "npm run build",
+    "cap:sync": "cap sync ios",
+    "build:ios": "npm run build:web && npm run cap:sync",
     "start": "next start",
     "lint": "next lint",
     "test": "node --test test"
