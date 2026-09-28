@@ -13,14 +13,6 @@ workflows:
         script: npm test
       - name: Build static web app
         script: npm run build:web
-      - name: Generate iOS SPM project
-        script: |
-          set -e
-          mv out out-for-capacitor-add
-          trap 'mv out-for-capacitor-add out' EXIT
-          npx --no-install cap add ios --packagemanager SPM
-          mv out-for-capacitor-add out
-          trap - EXIT
       - name: Sync iOS
         script: npm run cap:sync
       - name: Compile unsigned simulator app
@@ -37,10 +29,7 @@ workflows:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO \
             build 2>&1 | tee "$CM_BUILD_DIR/xcodebuild.log"
-      - name: Archive generated iOS project
-        script: tar -czf "$CM_BUILD_DIR/ios-project.tar.gz" -C "$CM_BUILD_DIR" ios
     artifacts:
       - build/ios/Build/Products/Debug-iphonesimulator/*.app
       - xcodebuild.log
       - ios/App/CapApp-SPM/Package.swift
-      - ios-project.tar.gz
