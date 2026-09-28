@@ -1,0 +1,37 @@
+workflows:
+  ios-unsigned-validation:
+    name: iOS unsigned validation
+    instance_type: mac_mini_m2
+    max_build_duration: 120
+    environment:
+      xcode: "26.4"
+      node: "20"
+    scripts:
+      - name: Install dependencies
+        script: npm ci
+      - name: Run tests
+        script: npm test
+      - name: Build static web app
+        script: npm run build:web
+      - name: Generate iOS SPM project
+        script: npx --no-install cap add ios --packagemanager SPM
+      - name: Sync iOS
+        script: npm run cap:sync
+      - name: Compile unsigned simulator app
+        script: |
+          set -o pipefail
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$CM_BUILD_DIR/build/ios" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            build 2>&1 | tee "$CM_BUILD_DIR/xcodebuild.log"
+    artifacts:
+      - build/ios/Build/Products/Debug-iphonesimulator/*.app
+      - xcodebuild.log
+      - ios/App/CapApp-SPM/Package.swift
