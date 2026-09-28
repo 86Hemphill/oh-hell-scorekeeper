@@ -50,7 +50,7 @@ const faqItems = [
   {
     question: 'What does Screw the Dealer do in this app?',
     answer:
-      'When Screw the Dealer is on, the dealer cannot make the total bids equal the cards dealt for that round. Illegal dealer bids are blocked before play can start.',
+      'When Screw the Dealer is on, the dealer cannot make total bids equal cards dealt on rounds with 2 or more cards. One-card rounds are exempt.',
   },
   {
     question: 'When is a round complete?',

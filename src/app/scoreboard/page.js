@@ -128,6 +128,7 @@ export default function ScoreboardPage() {
   const [warning, setWarning] = useState('')
   const [expandedRounds, setExpandedRounds] = useState({})
   const [editingRounds, setEditingRounds] = useState({})
+  const [showFullScorecard, setShowFullScorecard] = useState(false)
   const [showWakeLockControl, setShowWakeLockControl] = useState(false)
   const [wakeLockStatus, setWakeLockStatus] = useState('idle')
   const [wakeLockMessage, setWakeLockMessage] = useState('')
@@ -202,10 +203,11 @@ export default function ScoreboardPage() {
     .sort((a, b) => b.rate - a.rate || b.exact - a.exact)[0] || null
   const leader = placings[0] || null
   const runnerUp = placings[1] || null
+  const winners = leader ? placings.filter((entry) => entry.score === leader.score) : []
   const margin = leader && runnerUp ? leader.score - runnerUp.score : null
   const toughestRound = getToughestRound(board.rounds)
   const dealerRestrictedBid =
-    activeRound && !gameFinished && rules.screwTheDealer && activePhase === 'bidding'
+    activeRound && activeRound.cards > 1 && !gameFinished && rules.screwTheDealer && activePhase === 'bidding'
       ? activeRound.cards -
         game.names
           .filter((name) => name !== activeRound.dealer)
@@ -375,7 +377,7 @@ export default function ScoreboardPage() {
       return
     }
 
-    if (field === 'bids' && isActiveRound && rules.screwTheDealer && player === round.dealer) {
+    if (field === 'bids' && isActiveRound && round.cards > 1 && rules.screwTheDealer && player === round.dealer) {
       const forbiddenBid = getForbiddenDealerBidValue({
         players: clone.names,
         dealer: player,
@@ -449,6 +451,7 @@ export default function ScoreboardPage() {
       })
     )
     setWarning('')
+    setShowFullScorecard(false)
     setVersion((v) => v + 1)
   }
 
@@ -511,6 +514,7 @@ export default function ScoreboardPage() {
       })
     )
     setWarning('')
+    setShowFullScorecard(false)
     setVersion((v) => v + 1)
   }
 
@@ -519,6 +523,7 @@ export default function ScoreboardPage() {
     window.localStorage.setItem('ohsa-game', JSON.stringify(rematch))
     setExpandedRounds({})
     setEditingRounds({})
+    setShowFullScorecard(false)
     setWarning('')
     setVersion((v) => v + 1)
   }
@@ -528,8 +533,67 @@ export default function ScoreboardPage() {
       <main className="screen wide">
         <div className="stack wideStack scoreboardShell">
           <section className="panel resultsHero">
-            <p className="eyebrow">Final Results</p>
-            <h2>Game Complete</h2>
+            <p className="eyebrow">Game Complete</p>
+            <h1>{winners.length > 1 ? 'Shared win' : `${leader?.name || 'Game'} wins!`}</h1>
+            {winners.length > 1 ? <p className="resultsWinners">{winners.map((entry) => entry.name).join(', ')}</p> : null}
+            <p className="resultsWinnerScore">
+              {leader ? `${leader.score} points` : 'Final results'}
+              {margin > 0 ? <span> · Won by {margin}</span> : null}
+            </p>
+          </section>
+
+          <section className="panel standingsPanel">
+            <p className="eyebrow">Final Standings</p>
+            <div className="resultsStandings">
+              {placings.map((entry) => (
+                <div key={entry.name} className={`resultPlaceCard ${entry.score === leader?.score ? 'place-1' : ''}`}>
+                  <span className="standingPlace">{entry.label}</span>
+                  <strong>{entry.name}</strong>
+                  <span className="resultScore">{entry.score}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="panel momentsPanel">
+            <p className="eyebrow">Top Moments</p>
+            <div className="momentsList">
+              <div className="momentCard">
+                <span className="controlLabel">Best Exact-Bid Rate</span>
+                <strong>{bestExactBidder ? bestExactBidder.name : '-'}</strong>
+                <span>
+                  {bestExactBidder
+                    ? `${bestExactBidder.exact} of ${bestExactBidder.completed} exact`
+                    : 'No completed rounds'}
+                </span>
+              </div>
+              <div className="momentCard">
+                <span className="controlLabel">Toughest Round</span>
+                <strong>{toughestRound ? `Round ${toughestRound.round}` : '-'}</strong>
+                <span>{toughestRound ? `Total miss: ${toughestRound.totalSwing}` : 'No completed rounds'}</span>
+              </div>
+            </div>
+          </section>
+
+          <section className="resultsActions" aria-label="Finished game actions">
+            <button className="button primary" onClick={startRematch}>
+              Rematch Same Table
+            </button>
+            <button
+              className="button secondary"
+              aria-expanded={showFullScorecard}
+              onClick={() => setShowFullScorecard((current) => !current)}
+            >
+              {showFullScorecard ? 'Hide full scorecard' : 'View full scorecard'}
+            </button>
+            <Link href="/players" className="button secondary">
+              New Game
+            </Link>
+          </section>
+
+          {showFullScorecard ? (
+          <section id="full-scorecard" className="panel roundHistoryPanel">
+            <p className="eyebrow">Full Scorecard</p>
             <div className="ruleList">
               <span className="ruleChip">
                 {rules.scoringMethod === 'competitive' ? 'Competitive Scoring' : 'Classic Scoring'}
@@ -537,50 +601,7 @@ export default function ScoreboardPage() {
               <span className="ruleChip">Screw the Dealer: {rules.screwTheDealer ? 'On' : 'Off'}</span>
               <span className="ruleChip">1-card round twice: {rules.playSingleCardRoundTwice ? 'On' : 'Off'}</span>
             </div>
-          </section>
-
-          <section className="resultsGrid">
-            <section className="panel standingsPanel">
-              <p className="eyebrow">Standings</p>
-              <div className="resultsStandings">
-                {placings.map((entry, index) => (
-                  <div key={entry.name} className={`resultPlaceCard place-${index + 1}`}>
-                    <span className="standingPlace">{entry.label}</span>
-                    <strong>{entry.name}</strong>
-                    <span className="resultScore">{entry.score}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="panel momentsPanel">
-              <p className="eyebrow">Top Moments</p>
-              <div className="momentsList">
-                <div className="momentCard">
-                  <span className="controlLabel">Winner</span>
-                  <strong>{leader ? leader.name : '-'}</strong>
-                  <span>{margin !== null ? `Won by ${margin}` : 'Solo result'}</span>
-                </div>
-                <div className="momentCard">
-                  <span className="controlLabel">Best Exact-Bid Rate</span>
-                  <strong>{bestExactBidder ? bestExactBidder.name : '-'}</strong>
-                  <span>
-                    {bestExactBidder
-                      ? `${bestExactBidder.exact} of ${bestExactBidder.completed} exact`
-                      : 'No completed rounds'}
-                  </span>
-                </div>
-                <div className="momentCard">
-                  <span className="controlLabel">Toughest Round</span>
-                  <strong>{toughestRound ? `Round ${toughestRound.round}` : '-'}</strong>
-                  <span>{toughestRound ? `Total miss: ${toughestRound.totalSwing}` : 'No completed rounds'}</span>
-                </div>
-              </div>
-            </section>
-          </section>
-
-          <section className="panel roundHistoryPanel">
-            <p className="eyebrow">Round History</p>
+            <h2>Round History</h2>
             <div className="roundList">
               {entries.map((entry, roundIndex) => {
                 const roundProgress = board.rounds[roundIndex]
@@ -667,23 +688,20 @@ export default function ScoreboardPage() {
               })}
             </div>
           </section>
+          ) : null}
 
+          {showFullScorecard ? (
           <section className="panel scoreboardFooter">
             <div className="row wrap">
-              <button className="button primary" onClick={startRematch}>
-                Rematch Same Table
-              </button>
               <button className="button secondary" onClick={reopenGame}>
                 Reopen Game
               </button>
-              <Link href="/players" className="button secondary">
-                New Game
-              </Link>
               <button className="button danger" onClick={clearSavedGame}>
                 Clear Saved Game
               </button>
             </div>
           </section>
+          ) : null}
         </div>
       </main>
     )

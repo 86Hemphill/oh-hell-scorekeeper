@@ -103,7 +103,7 @@ export default function RulesPage() {
                     {screwTheDealer ? 'On' : 'Off'}
                   </span>
                 </div>
-                <span>When all bids are entered, total bids cannot equal cards dealt in that round.</span>
+                <span>On rounds with 2 or more cards, total bids cannot equal cards dealt.</span>
               </button>
             </div>
 

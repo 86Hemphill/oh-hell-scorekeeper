@@ -142,27 +142,49 @@ p {
 
 .resultsHero {
   display: grid;
-  gap: 0.85rem;
+  gap: 0.35rem;
+  padding: 1.6rem 1.25rem;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(26, 66, 64, 0.95), rgba(9, 29, 33, 0.92));
+  border-color: rgba(114, 231, 210, 0.38);
 }
 
-.resultsGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.95fr);
-  gap: 1rem;
+.resultsHero h1 {
+  margin: 0;
+  color: #f4f1e8;
+  font-size: clamp(2rem, 7vw, 3.25rem);
+  overflow-wrap: anywhere;
+}
+
+.resultsWinners {
+  margin: 0;
+  font-size: 1.15rem;
+  overflow-wrap: anywhere;
+}
+
+.resultsWinnerScore {
+  margin: 0;
+  color: #bcebe2;
 }
 
 .resultsStandings {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.45rem;
 }
 
 .resultPlaceCard {
   display: grid;
-  gap: 0.2rem;
-  padding: 0.95rem 1rem;
+  grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 0.85rem;
   border-radius: 16px;
   background: rgba(10, 22, 38, 0.82);
   border: 1px solid rgba(66, 126, 119, 0.24);
+}
+
+.resultPlaceCard strong {
+  overflow-wrap: anywhere;
 }
 
 .resultPlaceCard.place-1 {
@@ -170,19 +192,15 @@ p {
   border-color: rgba(114, 231, 210, 0.38);
 }
 
-.resultPlaceCard.place-2,
-.resultPlaceCard.place-3 {
-  background: rgba(12, 24, 40, 0.88);
-}
-
 .resultScore {
-  font-size: 1.4rem;
+  font-size: 1.15rem;
   font-weight: 700;
 }
 
 .momentsList {
   display: grid;
-  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
 }
 
 .momentCard {
@@ -192,6 +210,16 @@ p {
   border-radius: 14px;
   background: rgba(9, 20, 36, 0.9);
   border: 1px solid #2b6660;
+}
+
+.momentCard strong {
+  overflow-wrap: anywhere;
+}
+
+.resultsActions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
 }
 
 .roundHistoryPanel {
@@ -936,7 +964,7 @@ p {
     padding: 1.1rem;
   }
 
-  .resultsGrid {
+  .resultsActions {
     grid-template-columns: 1fr;
   }
 
@@ -1031,5 +1059,11 @@ p {
   .cellControl button {
     min-width: 2.4rem;
     min-height: 2.4rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .momentsList {
+    grid-template-columns: 1fr;
   }
 }

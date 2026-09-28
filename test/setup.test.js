@@ -105,7 +105,7 @@ test('createRematchGame rebuilds a fresh in-progress game with the same table ru
   )
 })
 
-test('isForbiddenDealerBid blocks the dealer from making bids equal cards dealt', () => {
+test('isForbiddenDealerBid blocks equal-total dealer bids on multi-card rounds', () => {
   assert.equal(
     getForbiddenDealerBidValue({
       players: ['Ava', 'Bo', 'Cy'],
@@ -148,4 +148,29 @@ test('isForbiddenDealerBid blocks the dealer from making bids equal cards dealt'
     }),
     false
   )
+})
+
+test('isForbiddenDealerBid allows equal-total dealer bids on every one-card round', () => {
+  const players = ['Ava', 'Bo']
+  const oneCardRounds = createGameEntries(players, 2, { playSingleCardRoundTwice: true })
+    .filter((entry) => entry.cards === 1)
+
+  assert.equal(oneCardRounds.length, 2)
+
+  for (const round of oneCardRounds) {
+    const otherPlayer = players.find((name) => name !== round.dealer)
+
+    for (const otherBid of [0, 1]) {
+      assert.equal(
+        isForbiddenDealerBid({
+          players,
+          dealer: round.dealer,
+          bids: { [otherPlayer]: otherBid },
+          cards: round.cards,
+          candidateBid: 1 - otherBid,
+        }),
+        false
+      )
+    }
+  }
 })

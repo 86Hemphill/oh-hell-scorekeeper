@@ -85,7 +85,8 @@ function isForbiddenDealerBid({ players, dealer, bids, cards, candidateBid }) {
     throw new Error('candidateBid must be a whole number zero or greater')
   }
 
-  return candidateBid === getForbiddenDealerBidValue({ players, dealer, bids, cards })
+  const forbiddenBid = getForbiddenDealerBidValue({ players, dealer, bids, cards })
+  return cards > 1 && candidateBid === forbiddenBid
 }
 
 function createRematchGame(game) {
