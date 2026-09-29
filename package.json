@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@capacitor/core": "7.6.9",
+    "@capacitor/haptics": "7.0.5",
     "@capacitor/ios": "7.6.9",
     "@capacitor/status-bar": "7.0.6",
     "next": "14.2.35",

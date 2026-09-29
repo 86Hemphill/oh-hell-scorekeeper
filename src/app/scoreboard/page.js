@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { finishedGame, lightScoreChange } from '../haptics'
 import scoring from '../../game/scoring'
 import setup from '../../game/setup'
 
@@ -410,6 +411,7 @@ export default function ScoreboardPage() {
     clone.progressed = true
     clone.status = GAME_STATUS.IN_PROGRESS
     window.localStorage.setItem('ohsa-game', JSON.stringify(clone))
+    if (next !== current) lightScoreChange()
     setWarning(nextWarning)
     setVersion((v) => v + 1)
   }
@@ -450,6 +452,7 @@ export default function ScoreboardPage() {
         status: GAME_STATUS.FINISHED,
       })
     )
+    finishedGame()
     setWarning('')
     setShowFullScorecard(false)
     setVersion((v) => v + 1)
