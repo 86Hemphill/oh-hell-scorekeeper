@@ -1,5 +1,5 @@
 export default function sitemap() {
-  const routes = ['', '/players', '/cards', '/rules', '/scoreboard']
+  const routes = ['', '/players', '/cards', '/rules', '/scoreboard', '/privacy', '/support']
   const now = new Date()
 
   return routes.map((route) => ({
