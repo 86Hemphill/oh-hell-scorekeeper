@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Oh Hell Scorekeeper</string>
+    <string name="title_activity_main">Oh Hell Scorekeeper</string>
+    <string name="package_name">com.hemphill.ohhellscorekeeper</string>
+    <string name="custom_url_scheme">com.hemphill.ohhellscorekeeper</string>
+</resources>
