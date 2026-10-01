@@ -55,3 +55,29 @@ workflows:
           ./gradlew assembleDebug
     artifacts:
       - android/app/build/outputs/apk/debug/app-debug.apk
+  android-release:
+    name: Android release AAB
+    instance_type: mac_mini_m2
+    max_build_duration: 120
+    environment:
+      node: "20"
+      java: "21"
+      android_signing:
+        - oh_hell_upload
+    scripts:
+      - name: Install dependencies
+        script: npm ci
+      - name: Run tests
+        script: npm test
+      - name: Build static web app
+        script: npm run build:web
+      - name: Sync Android
+        script: npx --no-install cap sync android
+      - name: Set Android SDK location
+        script: echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
+      - name: Build release AAB
+        script: |
+          cd android
+          ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/bundle/release/app-release.aab
